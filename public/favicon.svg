@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Umanga Rimal">
+  <rect width="32" height="32" rx="8" fill="#0a0908"/>
+  <circle cx="16" cy="16" r="10.4" fill="none" stroke="#b3915b" stroke-width="2"/>
+  <polygon
+    points="16,7.15 23.7,11.6 23.7,20.4 16,24.85 8.3,20.4 8.3,11.6"
+    fill="none"
+    stroke="#b3915b"
+    stroke-width="1.6"
+    stroke-linejoin="round"/>
+  <circle cx="16" cy="16" r="3.2" fill="#b3915b"/>
+</svg>
