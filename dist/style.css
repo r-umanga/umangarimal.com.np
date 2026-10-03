@@ -104,3 +104,7 @@ html{overflow-x:clip}
 .changing-lens .lens-photo-orbit{opacity:0;transform:translateY(15px)}
 @keyframes lens-float{0%,100%{transform:translateY(0) rotate(var(--angle,-5deg))}50%{transform:translateY(-10px) rotate(var(--angle,-5deg))}}
 @media(max-width:700px){.lens-swipe-surface{height:290px}.lens-selector{top:282px}.has-lens-photos .lens-photo{width:24%;left:2%;top:30px}.has-lens-photos .lens-photo:nth-child(2){top:180px;left:4%}.has-lens-photos .lens-photo:nth-child(3){left:auto;right:2%;top:30px}.has-lens-photos .lens-photo:nth-child(4){left:auto;right:4%;top:180px}.lens-photo img{height:80px}.lens-photo span{font-size:9px}}
+
+/* Keep the supplied portrait's full framing on desktop and mobile. */
+.portrait-slot:has(>img){padding:0;aspect-ratio:2/3;max-height:none}
+.portrait-slot>img{display:block;width:100%;height:auto;object-fit:contain}

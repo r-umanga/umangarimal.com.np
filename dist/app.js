@@ -1,4 +1,4 @@
-import { portfolio, lensSets } from './content.js?v=6';
+import { portfolio, lensSets } from './content.js?v=6-portrait-20261003';
 import { initLensGallery } from './lens-gallery.js';
 import { cameraPose } from './camera-motion.js?v=6';
 const $ = s => document.querySelector(s);
@@ -74,8 +74,13 @@ $('#grade-slider').addEventListener('input', e => {
   e.target.setAttribute('aria-valuetext', `${100-Number(e.target.value)} percent color treatment revealed`);
 });
 if (portfolio.portrait) {
-  const image = new Image(); image.src = portfolio.portrait; image.alt = portfolio.portraitAlt;
-  image.onload = () => { const slot = $('#portrait-slot'); slot.replaceChildren(image); slot.style.padding = '0'; image.style.cssText = 'width:100%;height:100%;object-fit:cover'; };
+  const slot = $('#portrait-slot');
+  const image = slot.querySelector('img') || new Image();
+  image.alt = portfolio.portraitAlt;
+  image.loading = 'lazy'; image.decoding = 'async';
+  image.width = 960; image.height = 1440;
+  if (image.getAttribute('src') !== portfolio.portrait) image.src = portfolio.portrait;
+  if (!slot.contains(image)) slot.replaceChildren(image);
 }
 const knowbitCopy = $('.knowbit').nextElementSibling;
 knowbitCopy.querySelector('p').textContent = portfolio.knowbit.description;

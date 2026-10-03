@@ -1,8 +1,8 @@
 // Replace the sample media with Umanga's original photographs here.
-// Use local paths under assets/. Portrait remains an honest empty photo slot until supplied.
+// Use local paths under assets/. The About portrait uses the supplied pale gray suit image.
 export const portfolio = {
-  portrait: null,
-  portraitAlt: 'Umanga Rimal, photographer and filmmaker from Nepal',
+  portrait: 'assets/work/umanga-rimal-portrait-gray.webp',
+  portraitAlt: 'Umanga Rimal wearing a pale gray suit and plaid tie against a blue studio backdrop',
   knowbit: { description: 'A personal AI project by Umanga Rimal.', url: null },
   photos: [
     { title: 'After the sun', category: 'street', categoryLabel: 'Street', src: 'assets/durbar-dusk.webp', alt: 'Sample image of a Nepalese square under a blue dusk sky', note: 'Dusk / sample image' },
