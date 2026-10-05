@@ -1,19 +1,308 @@
-// Replace the sample media with Umanga's original photographs here.
-// Use local paths under assets/. Portrait remains an honest empty photo slot until supplied.
+// Add a photo to this ONE list. Gallery, category filters and lens collections update together.
+// Each entry uses a full WebP src and a smaller WebP thumb. No fixed photo-count limit.
+// Categories: street, light, events, nature. Lens: kit-18-55 or tele-55-250.
+export const photos = [
+  {
+    "id": "in-flight",
+    "title": "In flight",
+    "category": "nature",
+    "categoryLabel": "Nature",
+    "src": "photos/gallery/in-flight.webp",
+    "thumb": "photos/gallery/thumbnails/in-flight-small.webp",
+    "width": 1080,
+    "height": 1350,
+    "thumbWidth": 720,
+    "thumbHeight": 900,
+    "alt": "A bird in flight against a softly lit pale sky.",
+    "lens": "tele-55-250",
+    "note": "EF-S 55–250mm"
+  },
+  {
+    "id": "by-the-water",
+    "title": "By the water",
+    "category": "nature",
+    "categoryLabel": "Nature",
+    "src": "photos/gallery/by-the-water.webp",
+    "thumb": "photos/gallery/thumbnails/by-the-water-small.webp",
+    "width": 1080,
+    "height": 1350,
+    "thumbWidth": 720,
+    "thumbHeight": 900,
+    "alt": "A bird standing on a mossy stone beside water.",
+    "lens": "tele-55-250",
+    "note": "EF-S 55–250mm"
+  },
+  {
+    "id": "crescent",
+    "title": "Crescent",
+    "category": "light",
+    "categoryLabel": "Light studies",
+    "src": "photos/gallery/crescent.webp",
+    "thumb": "photos/gallery/thumbnails/crescent-small.webp",
+    "width": 1344,
+    "height": 1800,
+    "thumbWidth": 672,
+    "thumbHeight": 900,
+    "alt": "A crescent moon surrounded by a dark night sky.",
+    "lens": "tele-55-250",
+    "note": "EF-S 55–250mm"
+  },
+  {
+    "id": "young-macaque",
+    "title": "A curious look",
+    "category": "nature",
+    "categoryLabel": "Nature",
+    "src": "photos/gallery/young-macaque.webp",
+    "thumb": "photos/gallery/thumbnails/young-macaque-small.webp",
+    "width": 654,
+    "height": 654,
+    "thumbWidth": 654,
+    "thumbHeight": 654,
+    "alt": "A young macaque looking toward the camera beside stone steps.",
+    "lens": "tele-55-250",
+    "note": "EF-S 55–250mm"
+  },
+  {
+    "id": "quiet-watch",
+    "title": "Quiet watch",
+    "category": "nature",
+    "categoryLabel": "Nature",
+    "src": "photos/gallery/quiet-watch.webp",
+    "thumb": "photos/gallery/thumbnails/quiet-watch-small.webp",
+    "width": 1365,
+    "height": 1705,
+    "thumbWidth": 720,
+    "thumbHeight": 899,
+    "alt": "A close portrait of a macaque with warm brown fur.",
+    "lens": "tele-55-250",
+    "note": "EF-S 55–250mm"
+  },
+  {
+    "id": "passing-by",
+    "title": "Passing by",
+    "category": "street",
+    "categoryLabel": "Street",
+    "src": "photos/gallery/passing-by.webp",
+    "thumb": "photos/gallery/thumbnails/passing-by-small.webp",
+    "width": 715,
+    "height": 715,
+    "thumbWidth": 715,
+    "thumbHeight": 715,
+    "alt": "Two helmeted riders on a motorcycle against a blurred city background.",
+    "lens": "kit-18-55",
+    "note": "EF-S 18–55mm"
+  },
+  {
+    "id": "dashboard-light",
+    "title": "Dashboard light",
+    "category": "light",
+    "categoryLabel": "Light studies",
+    "src": "photos/gallery/dashboard-light.webp",
+    "thumb": "photos/gallery/thumbnails/dashboard-light-small.webp",
+    "width": 1440,
+    "height": 1800,
+    "thumbWidth": 720,
+    "thumbHeight": 900,
+    "alt": "Illuminated speedometer and tachometer dials in a dark car interior.",
+    "lens": "kit-18-55",
+    "note": "EF-S 18–55mm"
+  },
+  {
+    "id": "in-motion",
+    "title": "In motion",
+    "category": "events",
+    "categoryLabel": "Events",
+    "src": "photos/gallery/in-motion.webp",
+    "thumb": "photos/gallery/thumbnails/in-motion-small.webp",
+    "width": 1065,
+    "height": 1065,
+    "thumbWidth": 720,
+    "thumbHeight": 720,
+    "alt": "The rear of a green and white car with red tail lights and streaks of motion.",
+    "lens": "kit-18-55",
+    "note": "EF-S 18–55mm"
+  },
+  {
+    "id": "temple-steps",
+    "title": "Temple steps",
+    "category": "street",
+    "categoryLabel": "Street",
+    "src": "photos/gallery/temple-steps.webp",
+    "thumb": "photos/gallery/thumbnails/temple-steps-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "Visitors ascending the stone steps toward a temple with golden roof details.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "golden-rooftops",
+    "title": "Golden rooftops",
+    "category": "street",
+    "categoryLabel": "Street",
+    "src": "photos/gallery/golden-rooftops.webp",
+    "thumb": "photos/gallery/thumbnails/golden-rooftops-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "A red temple facade and ornate gold roofs above a broad stone staircase.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "night-rush",
+    "title": "Night rush",
+    "category": "light",
+    "categoryLabel": "Light studies",
+    "src": "photos/gallery/night-rush.webp",
+    "thumb": "photos/gallery/thumbnails/night-rush-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "Bright city lights stretching into radial streaks against the night.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "through-the-arch",
+    "title": "Through the arch",
+    "category": "street",
+    "categoryLabel": "Street",
+    "src": "photos/gallery/through-the-arch.webp",
+    "thumb": "photos/gallery/thumbnails/through-the-arch-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "A white stupa and golden spire framed by a brightly painted arch.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "beneath-the-canopy",
+    "title": "Beneath the canopy",
+    "category": "nature",
+    "categoryLabel": "Nature",
+    "src": "photos/gallery/beneath-the-canopy.webp",
+    "thumb": "photos/gallery/thumbnails/beneath-the-canopy-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "Branches and green leaves forming a dense canopy around a patch of sky.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "yellow-afterglow",
+    "title": "Yellow afterglow",
+    "category": "events",
+    "categoryLabel": "Events",
+    "src": "photos/gallery/yellow-afterglow.webp",
+    "thumb": "photos/gallery/thumbnails/yellow-afterglow-small.webp",
+    "width": 1800,
+    "height": 1200,
+    "thumbWidth": 720,
+    "thumbHeight": 480,
+    "alt": "A blue sports car at night, with yellow underbody light falling across the road.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "headlights",
+    "title": "Headlights",
+    "category": "events",
+    "categoryLabel": "Events",
+    "src": "photos/gallery/headlights.webp",
+    "thumb": "photos/gallery/thumbnails/headlights-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "A car facing the camera with bright headlights on a dark street.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "blue-hour-machine",
+    "title": "After dark",
+    "category": "events",
+    "categoryLabel": "Events",
+    "src": "photos/gallery/blue-hour-machine.webp",
+    "thumb": "photos/gallery/thumbnails/blue-hour-machine-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "A blue sports car parked on a lively street at night.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "toward-the-sky",
+    "title": "Toward the sky",
+    "category": "street",
+    "categoryLabel": "Street",
+    "src": "photos/gallery/toward-the-sky.webp",
+    "thumb": "photos/gallery/thumbnails/toward-the-sky-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "A close upward view of a golden stupa spire, fabric and prayer flags beneath clouds.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "courtyard-and-cloud",
+    "title": "Courtyard and cloud",
+    "category": "street",
+    "categoryLabel": "Street",
+    "src": "photos/gallery/courtyard-and-cloud.webp",
+    "thumb": "photos/gallery/thumbnails/courtyard-and-cloud-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "A stupa rising beside a brick temple and smaller stone shrines under a cloudy sky.",
+    "lens": null,
+    "note": ""
+  },
+  {
+    "id": "gold-and-white",
+    "title": "Gold and white",
+    "category": "street",
+    "categoryLabel": "Street",
+    "src": "photos/gallery/gold-and-white.webp",
+    "thumb": "photos/gallery/thumbnails/gold-and-white-small.webp",
+    "width": 1200,
+    "height": 1800,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "An ornate golden shrine against the white dome of a stupa, with its spire above.",
+    "lens": null,
+    "note": ""
+  }
+];
 export const portfolio = {
-  portrait: null,
-  portraitAlt: 'Umanga Rimal, photographer and filmmaker from Nepal',
-  knowbit: { description: 'A personal AI project by Umanga Rimal.', url: null },
-  photos: [
-    { title: 'After the sun', category: 'street', categoryLabel: 'Street', src: 'assets/durbar-dusk.webp', alt: 'Sample image of a Nepalese square under a blue dusk sky', note: 'Dusk / sample image' },
-    { title: 'The quiet hours', category: 'light', categoryLabel: 'Light study', src: 'assets/window-study.webp', alt: 'Sample image of an empty chair in warm window light', note: 'Window light / sample image' },
-    { title: 'Between shadows', category: 'light', categoryLabel: 'Light study', src: 'assets/temple-light.webp', alt: 'Sample image of sunlight across an old courtyard', note: 'Courtyard / sample image' },
-    { title: 'An evening together', category: 'events', categoryLabel: 'Events', src: 'assets/mandap.webp', alt: 'Sample image of an illuminated ceremonial canopy', note: 'Celebration / sample image' }
-  ]
+ portrait:'photos/about/umanga-rimal-portrait-gray.webp',
+ portraitAlt:'Umanga Rimal wearing a pale gray suit and plaid tie against a blue studio backdrop',
+ photos,
+ contact:{email:'r.umanga@outlook.com',instagram:'https://www.instagram.com/r.umanga_/'},
+ knowbit:{description:'An API-powered chatbot and image generator I built in Class 9.',url:'https://knowbit.netlify.app'},
+ videos:[{id:'break-the-pattern',title:'Break the pattern',description:'A short reel about breaking routine, with a look inside the edit.',src:'assets/work/break-the-pattern.mp4',poster:'photos/reel/break-the-pattern-poster.webp',duration:'0:16'}]
 };
-
-// Add original photographs as {src,title,alt,note} when supplied.
-// A second lens entry requires its model and mount alignment before activation.
 export const lensSets = [
-  { id: 'kit-18-55', name: 'EF-S 18–55mm', model: null, photos: [] }
+ {id:'kit-18-55',name:'EF-S 18–55mm',model:'assets/camera-kiri.glb',description:'For everyday frames and wider scenes.',photos:photos.filter(p=>p.lens==='kit-18-55')},
+ {id:'tele-55-250',name:'EF-S 55–250mm',model:'assets/lens-55-250.glb',description:'A closer look at distant details.',photos:photos.filter(p=>p.lens==='tele-55-250')}
+];
+// Unknown project details stay absent until confirmed by Umanga.
+export const projects = [
+ {id:'knowbit',title:'Knowbit AI',label:'AI / BUILT IN CLASS 9',description:'An API-powered chatbot and image generator I built in Class 9.',built:'A chat interface and image-generation feature connected to external AI APIs.',tools:['Chatbot APIs','Image-generation APIs'],url:'https://knowbit.netlify.app',linkLabel:'Visit Knowbit AI'},
+ {id:'portfolio',title:'This portfolio',label:'PHOTOGRAPHY / DESIGN / DEVELOPMENT',description:'A personal home for my photographs, films and experiments.',built:'A scroll-driven camera with interchangeable lenses, photo galleries, a reel player and a color comparison.',tools:['HTML','CSS','JavaScript','Three.js'],url:'#home',linkLabel:'Explore this portfolio'},
+ {id:'qna',title:'QnA Book',label:'STUDENT PROJECT',description:'A social platform where Class 10 students connect, share problems and help each other find solutions.',built:'A post-and-comment system for sharing questions and discussing answers.',tools:[],url:'https://preview--qna-book.lovable.app/?__lovable_sha=b8e49b60',linkLabel:'Open QnA Book preview'}
 ];

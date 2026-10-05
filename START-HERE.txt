@@ -1,0 +1,10 @@
+UMANGA RIMAL — COMPLETE PORTFOLIO
+
+1. Extract this ZIP.
+2. Open the umanga-portfolio folder.
+3. Read README.md for running locally and deploying to Vercel.
+4. All photographs: dist/photos/
+5. Photo placement guide: PHOTO-GUIDE.md
+6. Upload the CONTENTS of umanga-portfolio to GitHub, not the ZIP. Keep dist, package.json and vercel.json at the repo root.
+
+No ChatGPT account or subscription is needed to run this website.
