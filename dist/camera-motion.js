@@ -19,5 +19,5 @@ export function cameraPose({heroTop=0,workTop,workBottom,kitTop,kitHeight,kitVie
   turn=.52+emerge*.40+spin;
  }
  if(reduced){turn=0;}
- return {x,y,scale,turn,kitProgress:spin,heroProgress:dive,covered:workTop<0&&workBottom>viewport,active:kitTop+kitHeight>0};
+ return {x,y,scale,turn,emerge,kitProgress:spin,heroProgress:dive,covered:workTop<0&&workBottom>viewport,active:kitTop+kitHeight>0};
 }

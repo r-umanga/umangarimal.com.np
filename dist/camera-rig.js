@@ -10,27 +10,28 @@ export function createCameraRig({THREE,scene,model,parts,reducedMotion=()=>false
  const body=parts?.body; if(body){body.position.set(0,0,0);model.add(body);}model.userData.atlas='camera-body';
  const groups=['lens-kit','lens-tele'].map((name,i)=>{const group=new THREE.Group();group.userData.atlas=name;const part=i?parts?.tele:parts?.kit;if(part){part.position.set(0,0,0);group.add(part);}scene.add(group);return group;});
  const mount=new THREE.Vector3(...MOUNT),localForward=new THREE.Vector3(0,0,1),rollAxis=new THREE.Vector3(0,0,1);
- let selected=0,transition=null,lastTime=0,reveal=0,viewWidth=1;
+ let selected=0,transition=null,lastTime=0,reveal=0,viewWidth=1,layout=null;
  function place(group,pos,quat,scale,twist=0){group.position.copy(pos);group.quaternion.copy(quat).multiply(new THREE.Quaternion().setFromAxisAngle(rollAxis,twist));group.scale.setScalar(Math.max(0.00001,scale));group.visible=scale>.0001;}
- function update(time,kitReveal,worldWidth){
+ function update(time,kitReveal,worldWidth,placement=null){
+  if(placement)layout=placement;
   lastTime=time;reveal=kitReveal;viewWidth=worldWidth;model.updateMatrixWorld(true);
   const q=model.quaternion.clone(),scale=model.scale.x;
   const seats=LENS_SEAT_OFFSETS.map(offset=>mount.clone().add(new THREE.Vector3(0,0,offset)));
   const attached=seats.map(seat=>seat.clone().applyMatrix4(model.matrixWorld));
   groups.forEach(group=>{group.userData.attachedTo=null;});
   const direction=localForward.clone().applyQuaternion(q);
-  const parked=new THREE.Vector3(worldWidth*.30,model.position.y+.02,0);
+  const parked=new THREE.Vector3(layout?.x??worldWidth*.30,layout?.y??model.position.y+.02,0);
   const parkQ=new THREE.Quaternion().setFromEuler(new THREE.Euler(-.13,-.62+(reducedMotion()?0:Math.sin(time*.0007)*.09),.04));
-  const parkedScale=scale*.72*reveal;
-  if(!reducedMotion())parked.y+=Math.sin(time*.00135+1)*.035;
+  const parkedScale=(layout?.scale??scale*.72)*reveal;
+  if(!reducedMotion())parked.y+=Math.sin(time*.00135+1)*Math.min(.015,scale*.03);
   if(!transition){place(groups[selected],attached[selected],q,scale);groups[selected].userData.attachedTo=model;groups[selected].userData.seat=seats[selected];place(groups[1-selected],parked,parkQ,parkedScale);return;}
   const t=reducedMotion()?1:clamp((time-transition.start)/EXCHANGE_MS),p=exchangePhases(t),old=groups[selected],next=groups[1-selected];
   const pulledOut=attached[selected].clone().addScaledVector(direction,scale*.85);
   const pulledIn=attached[1-selected].clone().addScaledVector(direction,scale*.85);
   const outgoing=attached[selected].clone().lerp(pulledOut,p.withdraw).lerp(parked,p.depart);
-  outgoing.y-=Math.sin(Math.PI*p.depart)*scale*.35;
+  outgoing.y-=Math.sin(Math.PI*p.depart)*(layout?.lift??scale*.35);
   const incoming=parked.clone().lerp(pulledIn,p.arrive).lerp(attached[1-selected],p.seat);
-  incoming.y+=Math.sin(Math.PI*p.arrive)*scale*.42;
+  incoming.y+=Math.sin(Math.PI*p.arrive)*(layout?.lift??scale*.42);
   place(old,outgoing,q.clone().slerp(parkQ,p.depart),scale+(parkedScale-scale)*p.depart,-.28*p.unlock*(1-p.depart));
   place(next,incoming,parkQ.clone().slerp(q,p.arrive),parkedScale+(scale-parkedScale)*p.arrive,.28*(1-p.seat)*p.arrive);
   if(t===1){selected=1-selected;groups[selected].userData.attachedTo=model;groups[selected].userData.seat=seats[selected];const done=transition.resolve;transition=null;done();}

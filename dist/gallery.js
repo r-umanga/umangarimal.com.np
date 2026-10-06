@@ -1,6 +1,6 @@
-import {initPhotoStories} from './photo-stories.js?v=final21';
-import {initOrbit} from './orbit-gallery.js?v=final21';
-import {initFlipbook} from './flipbook.js?v=final21';
+import {initPhotoStories} from './photo-stories.js?v=responsive1';
+import {initOrbit} from './orbit-gallery.js?v=responsive1';
+import {initFlipbook} from './flipbook.js?v=responsive1';
 export function initGallery({photos,cursor,hideCursor=()=>{}}){
  const $=s=>document.querySelector(s),grid=$('#photo-grid'),dialog=$('#lightbox');
  const image=dialog.querySelector('.lightbox-photo img'),count=$('#lightbox-count');

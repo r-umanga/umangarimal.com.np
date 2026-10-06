@@ -1,4 +1,4 @@
-import {photoStories} from './content.js?v=final21';
+import {photoStories} from './content.js?v=responsive1';
 const KEY='umanga-photo-stories-v1';
 const limits={story:1800,location:100,date:80,settings:150};
 export function validateStories(value,photos){

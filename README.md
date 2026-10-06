@@ -21,3 +21,7 @@ The contact form prepares a message in the visitor's email app; it does not send
 ## Camera and motion
 
 The supplied 3D camera and lenses remain. Rendering stops when the camera is offscreen, covered by the archive or a dialog, or the tab is hidden, and resumes with the selected lens and scroll position. There is no low-memory device mode. The full turntable fallback is used only if WebGL is unavailable. Preserve font and Three.js license notices in dist/assets.
+
+## Responsive camera update
+
+Camera and spare-lens positions use reserved page areas instead of fixed screen-height scaling. Camera size follows the available area; the spare lens has its own area. Incoming and outgoing lenses follow separate vertical paths. Layout geometry was checked at 14 viewport sizes from 280px to 3440px; physical-device visual testing is still recommended.

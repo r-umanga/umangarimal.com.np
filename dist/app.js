@@ -1,12 +1,13 @@
-import {deviceProfile, cameraInView, initVisibleMotion} from './performance.js?v=final21';
-import {initDesk} from './desk.js?v=final21';
-import { initGallery } from './gallery.js?v=final21';
-import { initPersonal } from './personal.js?v=final21';
-import { portfolio, lensSets } from './content.js?v=final21';
-import { initLensGallery } from './lens-gallery.js?v=final21';
-import { bootLoader } from './boot-loader.js?v=final21';
-import { createCameraRig, smooth } from './camera-rig.js?v=final21';
-import { cameraPose } from './camera-motion.js?v=final21';
+import {cameraLayout} from './camera-layout.js?v=responsive1';
+import {deviceProfile, cameraInView, initVisibleMotion} from './performance.js?v=responsive1';
+import {initDesk} from './desk.js?v=responsive1';
+import { initGallery } from './gallery.js?v=responsive1';
+import { initPersonal } from './personal.js?v=responsive1';
+import { portfolio, lensSets } from './content.js?v=responsive1';
+import { initLensGallery } from './lens-gallery.js?v=responsive1';
+import { bootLoader } from './boot-loader.js?v=responsive1';
+import { createCameraRig, smooth } from './camera-rig.js?v=responsive1';
+import { cameraPose } from './camera-motion.js?v=responsive1';
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 // The owner explicitly chose always-on motion on October 2.
@@ -52,7 +53,14 @@ initLensGallery({root:kit,sets:lensSets,onOpen:openPhoto,onSelect:async set=>{aw
 const firstPhoto = $('.photo-one'); const secondPhoto = $('.photo-two');
 let progress=0,tick=0;
 let pose={x:.72,y:.49,scale:1,turn:0,covered:false,active:true};
-function calculatePose(){const work=$('#work').getBoundingClientRect(),k=kit.getBoundingClientRect(),anchor=$('.kit-camera-space').getBoundingClientRect(),stageTop=stage.getBoundingClientRect().top,viewport=stage.clientHeight||innerHeight;const result=cameraPose({heroTop:hero.getBoundingClientRect().top,kitAnchorY:anchor.top+anchor.height/2-stageTop,workTop:work.top,workBottom:work.bottom,kitTop:k.top,kitHeight:kit.offsetHeight,kitViewport:$('.kit-sticky').offsetHeight,viewport,width:innerWidth,reduced});result.kitReveal=smooth((innerHeight*.65-k.top)/(innerHeight*.6));result.active=cameraInView(result,stageTop,viewport,innerHeight);return result;}
+function calculatePose(){
+ const work=$('#work').getBoundingClientRect(),k=kit.getBoundingClientRect(),anchor=$('.kit-camera-space').getBoundingClientRect(),park=$('.kit-lens-space').getBoundingClientRect(),home=$('.hero-camera-space').getBoundingClientRect(),stageRect=stage.getBoundingClientRect(),viewport=stage.clientHeight||innerHeight;
+ const result=cameraPose({heroTop:hero.getBoundingClientRect().top,kitAnchorY:anchor.top+anchor.height/2-stageRect.top,workTop:work.top,workBottom:work.bottom,kitTop:k.top,kitHeight:kit.offsetHeight,kitViewport:$('.kit-sticky').offsetHeight,viewport,width:stage.clientWidth||innerWidth,reduced});
+ result.kitReveal=smooth((innerHeight*.65-k.top)/(innerHeight*.6));
+ result.layout=cameraLayout({home,anchor,park,stage:stageRect,emerge:result.emerge,dive:result.heroProgress});
+ result.x=result.layout.x;result.y=result.layout.y;
+ result.active=cameraInView(result,stageRect.top,viewport,innerHeight);return result;
+}
 function updateScroll(){
  tick=0;pose=calculatePose();progress=pose.heroProgress;
  stage.setAttribute('aria-hidden',String(pose.covered||!pose.active));stage.classList.toggle('camera-away',pose.covered||!pose.active);
@@ -90,7 +98,7 @@ async function initCamera() {
     stage.dataset.renderer='webgl';
    }catch(error){renderer?.dispose();gl=null;console.warn('Using the camera turntable fallback',error);}
   }
-  if(!gl){const {turntableRenderer}=await import('./turntable-camera.js?v=final21');renderer=await turntableRenderer(THREE);stage.dataset.renderer='turntable';}
+  if(!gl){const {turntableRenderer}=await import('./turntable-camera.js?v=responsive1');renderer=await turntableRenderer(THREE);stage.dataset.renderer='turntable';}
   boot.progress(.85,'Setting the light');
   renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
   stage.append(renderer.domElement);
@@ -118,16 +126,17 @@ async function initCamera() {
    if(reduced){px=0;py=0;}if(!rendered||reduced)rendered={...pose};
    for(const key of ['x','y','scale','turn'])rendered[key]+=(pose[key]-rendered[key])*ease;
    const viewHeight=2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*camera.position.z;
-   const base=innerWidth<700?.47:.81;
+   const base=(pose.layout?.cameraPixels||200)/3.8*viewHeight/height;
    const targetReveal=pose.kitReveal??0;
    if(resumed)kitPresence=targetReveal;
    kitPresence=reduced?targetReveal:kitPresence+(targetReveal-kitPresence)*ease;const kitReveal=kitPresence;
-   const float=reduced?0:Math.sin(time*.00135)*.075;
+   const float=reduced?0:Math.sin(time*.00135)*Math.min(.035,viewHeight/height*5);
    const parallax=reduced?0:1-pose.kitProgress*.5;
-   model.scale.setScalar(base*rendered.scale);
-   model.position.set((rendered.x-.5-kitReveal*.09)*viewHeight*camera.aspect+px*.23*parallax,(.5-rendered.y)*viewHeight+float-py*.14*parallax,0);
+   model.scale.setScalar(base);
+   model.position.set((rendered.x-.5)*viewHeight*camera.aspect+px*.10*parallax,(.5-rendered.y)*viewHeight+float-py*.14*parallax,0);
    model.rotation.set(-.10+Math.sin(rendered.turn*Math.PI*2)*.10+py*.20*parallax,-.52+rendered.turn*Math.PI*2+px*.55*parallax+(reduced?0:Math.sin(time*.00085)*.045),-.04+Math.sin(rendered.turn*Math.PI*2)*.04+(reduced?0:Math.sin(time*.0008)*.012));
-   cameraRig.update(time,kitReveal,viewHeight*camera.aspect);
+   const layout=pose.layout;
+   cameraRig.update(time,kitReveal,viewHeight*camera.aspect,layout?{x:(layout.parkX-.5)*viewHeight*camera.aspect,y:(.5-layout.parkY)*viewHeight,scale:layout.lensPixels/4.4*viewHeight/height,lift:layout.liftPixels*viewHeight/height}:null);
    const drawStart=performance.now();renderer.render(scene,camera);
    // Reduce raster cost on a slow GPU without changing the camera path.
    if(gl&&!force&&performance.now()-drawStart>24){if(++slowFrames>=12&&quality>.65){quality=Math.max(.65,quality-.15);sizeDirty=true;slowFrames=0;}}else slowFrames=Math.max(0,slowFrames-1);
@@ -150,7 +159,7 @@ async function initCamera() {
   }catch(error){
    if(!gl)throw error;
    renderer.domElement.remove();renderer.dispose();gl=null;
-   const {turntableRenderer}=await import('./turntable-camera.js?v=final21');renderer=await turntableRenderer(THREE);
+   const {turntableRenderer}=await import('./turntable-camera.js?v=responsive1');renderer=await turntableRenderer(THREE);
    renderer.setPixelRatio(1);stage.append(renderer.domElement);stage.dataset.renderer='turntable';width=0;height=0;sizeDirty=true;
    if(raf){cancelAnimationFrame(raf);raf=0;}draw(performance.now(),true);
   }

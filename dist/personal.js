@@ -1,4 +1,4 @@
-import {portfolio,projects} from './content.js?v=final21';
+import {portfolio,projects} from './content.js?v=responsive1';
 export function initPersonal(){
  const $=s=>document.querySelector(s);
  const list=$('.project-list');list.replaceChildren();
