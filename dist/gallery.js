@@ -1,24 +1,33 @@
+import {initPhotoStories} from './photo-stories.js?v=final21';
+import {initOrbit} from './orbit-gallery.js?v=final21';
+import {initFlipbook} from './flipbook.js?v=final21';
 export function initGallery({photos,cursor,hideCursor=()=>{}}){
  const $=s=>document.querySelector(s),grid=$('#photo-grid'),dialog=$('#lightbox');
  const image=dialog.querySelector('.lightbox-photo img'),count=$('#lightbox-count');
+ const stories=initPhotoStories({photos,lightbox:dialog});
  let filtered=photos.map((_,i)=>i),order=[],collection=photos,active=0,lastFocus=null,touch=null;
  const buttons=[...document.querySelectorAll('[data-filter]')];
  photos.forEach((photo,index)=>{
-  const card=document.createElement('article');card.className='photo-card reveal';card.dataset.category=photo.category;
+  const card=document.createElement('article');card.id='frame-'+photo.id;card.className='photo-card';card.dataset.category=photo.category;card.dataset.number=String(index+1).padStart(2,'0');
   const button=document.createElement('button');button.type='button';button.className='photo-button';button.setAttribute('aria-label',`Open ${photo.title}`);
-  const frame=document.createElement('div');frame.className='photo-image';const img=new Image();img.src=photo.thumb||photo.src;img.alt=photo.alt||photo.title;img.loading='lazy';img.decoding='async';img.width=photo.thumbWidth||photo.width||720;img.height=photo.thumbHeight||photo.height||900;
-  if(photo.thumb&&photo.width>photo.thumbWidth){img.srcset=`${photo.thumb} ${photo.thumbWidth}w, ${photo.src} ${photo.width}w`;img.sizes='(max-width: 550px) 90vw, (max-width: 1000px) 44vw, 28vw';}
-  const icon=document.createElement('span');icon.className='open-photo';icon.textContent='+';icon.setAttribute('aria-hidden','true');frame.append(img,icon);button.append(frame);button.addEventListener('click',()=>openPhoto(index));
-  const caption=document.createElement('div');caption.className='photo-caption';const copy=document.createElement('div'),title=document.createElement('h3'),label=document.createElement('p');title.textContent=photo.title;label.textContent=photo.categoryLabel||photo.category;copy.append(title,label);caption.append(copy);card.append(button,caption);grid.append(card);
+  const frame=document.createElement('div');frame.className='photo-image';const img=new Image();img.dataset.src=`photos/gallery/orbit/${photo.id}.webp`;img.alt=photo.alt||photo.title;img.loading='lazy';img.decoding='async';img.width=photo.thumbWidth||photo.width||720;img.height=photo.thumbHeight||photo.height||900;
+  let recovery=0;img.addEventListener('error',()=>{if(recovery===0){recovery++;img.src=photo.thumb||photo.src;}else if(recovery===1){recovery++;img.src=photo.src;}});img.addEventListener('load',()=>card.classList.add('image-ready'));
+  const icon=document.createElement('span');icon.className='open-photo';icon.textContent='+';icon.setAttribute('aria-hidden','true');frame.append(img,icon);button.append(frame);
+  const caption=document.createElement('div');caption.className='photo-caption';const copy=document.createElement('div'),title=document.createElement('h3'),label=document.createElement('p');title.textContent=photo.title;label.textContent=photo.categoryLabel||photo.category;copy.append(title,label);const number=document.createElement('span');number.className='frame-number';number.textContent=String(index+1).padStart(2,'0');caption.append(copy,number);card.append(button,caption);grid.append(card);
  });
+ const orbit=initOrbit({grid,photos,onOpen:openPhoto});
+ initFlipbook({photos,onOpen:(index,list)=>openPhoto(index,[...list])});
  function filter(category){
-  filtered=[];grid.dataset.filtered=String(category!=='all');[...grid.children].forEach((card,i)=>{card.hidden=category!=='all'&&photos[i].category!==category;if(!card.hidden){filtered.push(i);if(category!=='all')card.classList.add('visible');}});
+  filtered=photos.map((_,i)=>i).filter(i=>category==='all'||photos[i].category===category);
   buttons.forEach(b=>{const selected=b.dataset.filter===category;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected));});
-  $('.gallery-count').textContent=`${filtered.length} photographs shown`;$('.archive-bar>.meta').textContent=`${String(filtered.length).padStart(2,'0')} FRAMES`;
+  if($('.archive-total'))$('.archive-total').textContent=String(filtered.length).padStart(2,'0');
+  $('.gallery-count').textContent=`${filtered.length} photographs in this collection`;
+  $('.archive-bar>.meta').textContent=`${String(filtered.length).padStart(2,'0')} FRAMES`;
+  orbit.filter(filtered);
  }
  buttons.forEach(b=>{b.hidden=b.dataset.filter!=='all'&&!photos.some(p=>p.category===b.dataset.filter);b.addEventListener('click',()=>filter(b.dataset.filter));});filter('all');
  function show(index){
-  const photo=collection[index];if(!photo)return;active=index;image.alt=photo.alt||photo.title;image.src=photo.src;
+  const photo=collection[index];if(!photo)return;active=index;stories.show(photo);image.alt=photo.alt||photo.title;image.src=photo.src;
   $('#lightbox-title').textContent=photo.title;$('#lightbox-note').textContent=photo.note||'';count.textContent=`${order.indexOf(index)+1} / ${order.length}`;
   dialog.querySelectorAll('.prev-photo,.next-photo').forEach(b=>{b.disabled=order.length<2;});
  }
@@ -30,7 +39,7 @@ export function initGallery({photos,cursor,hideCursor=()=>{}}){
  dialog.querySelector('.close-lightbox').addEventListener('click',()=>dialog.close());
  dialog.querySelector('.prev-photo').addEventListener('click',()=>step(-1));dialog.querySelector('.next-photo').addEventListener('click',()=>step(1));
  dialog.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();step(e.key==='ArrowRight'?1:-1);}if(e.key==='Escape'){e.preventDefault();dialog.close();}});
- dialog.addEventListener('close',()=>{document.body.classList.remove('modal-open');if(cursor)document.body.append(cursor);hideCursor();lastFocus?.focus();touch=null;});
+ dialog.addEventListener('close',()=>{document.body.classList.toggle('modal-open',!!document.querySelector('dialog[open]'));if(cursor)document.body.append(cursor);hideCursor();lastFocus?.focus();touch=null;});
  dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();});
  const surface=dialog.querySelector('.lightbox-photo');
  surface.addEventListener('touchstart',e=>{touch=e.touches.length===1?{x:e.touches[0].clientX,y:e.touches[0].clientY}:null;},{passive:true});

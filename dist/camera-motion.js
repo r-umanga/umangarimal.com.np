@@ -4,7 +4,7 @@ const smooth=t=>{t=clamp(t);return t*t*t*(t*(t*6-15)+10)};
 const mix=(a,b,t)=>a+(b-a)*t;
 export function cameraPose({heroTop=0,workTop,workBottom,kitTop,kitHeight,kitViewport,kitAnchorY,viewport,width,reduced}) {
  const mobile=width<700;
- const homeX=mobile?.57:.73,homeY=mobile?.75:.48;
+ const homeX=mobile?.69:.72,homeY=mobile?.87:.48;
  const dive=smooth((viewport-workTop)/(viewport*.80));
  const emerge=smooth((viewport*1.05-kitTop)/(viewport*.90));
  const spin=smooth(-kitTop/Math.max(viewport*.6,kitHeight-kitViewport));

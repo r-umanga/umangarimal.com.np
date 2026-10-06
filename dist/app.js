@@ -1,10 +1,12 @@
-import { initGallery } from './gallery.js?v=14';
-import { initPersonal } from './personal.js?v=14';
-import { portfolio, lensSets } from './content.js?v=14';
-import { initLensGallery } from './lens-gallery.js?v=14';
-import { bootLoader } from './boot-loader.js?v=14';
-import { createCameraRig, smooth } from './camera-rig.js?v=14';
-import { cameraPose } from './camera-motion.js?v=14';
+import {deviceProfile, cameraInView, initVisibleMotion} from './performance.js?v=final21';
+import {initDesk} from './desk.js?v=final21';
+import { initGallery } from './gallery.js?v=final21';
+import { initPersonal } from './personal.js?v=final21';
+import { portfolio, lensSets } from './content.js?v=final21';
+import { initLensGallery } from './lens-gallery.js?v=final21';
+import { bootLoader } from './boot-loader.js?v=final21';
+import { createCameraRig, smooth } from './camera-rig.js?v=final21';
+import { cameraPose } from './camera-motion.js?v=final21';
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 // The owner explicitly chose always-on motion on October 2.
@@ -16,10 +18,11 @@ boot.progress(.05);
 let cameraRig;
 let cameraReady;
 const cursor = $('.custom-cursor');
+initVisibleMotion();
 const finePointer = matchMedia('(hover:hover) and (pointer:fine)');
 function hideCursor() { document.documentElement.classList.remove('cursor-enabled'); cursor.classList.remove('tracking','engaged','pressed'); }
 addEventListener('pointermove', e => {
-  if (reduced || !finePointer.matches || e.pointerType === 'touch' || e.target.closest?.('input:not([type=range]),textarea,select,#video-modal')) { hideCursor(); return; }
+  if (reduced || !finePointer.matches || e.pointerType === 'touch' || e.target.closest?.('input:not([type=range]),textarea,select,#video-modal,#photo-book,#photo-story-editor')) { hideCursor(); return; }
   document.documentElement.classList.add('cursor-enabled');
   cursor.classList.add('tracking');
   cursor.style.transform = `translate3d(${e.clientX}px,${e.clientY}px,0)`;
@@ -49,10 +52,10 @@ initLensGallery({root:kit,sets:lensSets,onOpen:openPhoto,onSelect:async set=>{aw
 const firstPhoto = $('.photo-one'); const secondPhoto = $('.photo-two');
 let progress=0,tick=0;
 let pose={x:.72,y:.49,scale:1,turn:0,covered:false,active:true};
-function calculatePose(){const work=$('#work').getBoundingClientRect(),k=kit.getBoundingClientRect(),anchor=$('.kit-camera-space').getBoundingClientRect(),stageTop=stage.getBoundingClientRect().top;return cameraPose({heroTop:hero.getBoundingClientRect().top,kitAnchorY:anchor.top+anchor.height/2-stageTop,workTop:work.top,workBottom:work.bottom,kitTop:k.top,kitHeight:kit.offsetHeight,kitViewport:$('.kit-sticky').offsetHeight,viewport:stage.clientHeight||innerHeight,width:innerWidth,reduced});}
+function calculatePose(){const work=$('#work').getBoundingClientRect(),k=kit.getBoundingClientRect(),anchor=$('.kit-camera-space').getBoundingClientRect(),stageTop=stage.getBoundingClientRect().top,viewport=stage.clientHeight||innerHeight;const result=cameraPose({heroTop:hero.getBoundingClientRect().top,kitAnchorY:anchor.top+anchor.height/2-stageTop,workTop:work.top,workBottom:work.bottom,kitTop:k.top,kitHeight:kit.offsetHeight,kitViewport:$('.kit-sticky').offsetHeight,viewport,width:innerWidth,reduced});result.kitReveal=smooth((innerHeight*.65-k.top)/(innerHeight*.6));result.active=cameraInView(result,stageTop,viewport,innerHeight);return result;}
 function updateScroll(){
  tick=0;pose=calculatePose();progress=pose.heroProgress;
- stage.setAttribute('aria-hidden',String(pose.covered||!pose.active));
+ stage.setAttribute('aria-hidden',String(pose.covered||!pose.active));stage.classList.toggle('camera-away',pose.covered||!pose.active);
  $('.hero-progress i').style.transform=`scaleX(${progress})`;
  $('.kit-progress i').style.transform=`scaleX(${pose.kitProgress})`;
  const p=reduced?0:progress;
@@ -73,7 +76,7 @@ async function initCamera() {
   const THREE = await import('./assets/three.module.js');
   let renderer,parts,gl;
   const surface=document.createElement('canvas');
-  try{gl=surface.getContext('webgl2',{alpha:true,antialias:devicePixelRatio<2,powerPreference:'low-power'})||surface.getContext('webgl',{alpha:true,antialias:devicePixelRatio<2,powerPreference:'low-power'});}catch{}
+  try{gl=surface.getContext('webgl2',{alpha:true,antialias:false,powerPreference:'low-power'})||surface.getContext('webgl',{alpha:true,antialias:false,powerPreference:'low-power'});}catch{}
   if(gl){
    try{
     renderer=new THREE.WebGLRenderer({canvas:surface,context:gl,alpha:true});
@@ -83,13 +86,13 @@ async function initCamera() {
     let timeout;const models=await Promise.race([Promise.all([read(`./assets/camera-kiri${assetSuffix}.glb`,0),read(`./assets/lens-55-250${assetSuffix}.glb`,1)]),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Loading fallback')),16000);})]).finally(()=>clearTimeout(timeout));
     parts={body:models[0].scene.getObjectByName('camera-body'),kit:models[0].scene.getObjectByName('lens-kit'),tele:models[1].scene.getObjectByName('lens-tele')};
     if(Object.values(parts).some(p=>!p))throw new Error('Missing camera part');
-    for(const part of Object.values(parts))part.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(o.material.map)o.material.map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());}});
+    for(const part of Object.values(parts))part.traverse(o=>{if(o.isMesh){o.frustumCulled=true;if(o.material.map)o.material.map.anisotropy=Math.min(2,renderer.capabilities.getMaxAnisotropy());}});
     stage.dataset.renderer='webgl';
    }catch(error){renderer?.dispose();gl=null;console.warn('Using the camera turntable fallback',error);}
   }
-  if(!gl){const {turntableRenderer}=await import('./turntable-camera.js?v=14');renderer=await turntableRenderer(THREE);stage.dataset.renderer='turntable';}
+  if(!gl){const {turntableRenderer}=await import('./turntable-camera.js?v=final21');renderer=await turntableRenderer(THREE);stage.dataset.renderer='turntable';}
   boot.progress(.85,'Setting the light');
-  renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<700?1.15:1.6));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+  renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
   stage.append(renderer.domElement);
   const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,0,7.6);
   const model=new THREE.Group();scene.add(model);
@@ -99,10 +102,15 @@ async function initCamera() {
   const rim=new THREE.DirectionalLight(0xa5c4b7,2.6);rim.position.set(3,1,-3);scene.add(rim);
   const fill=new THREE.DirectionalLight(0xd29c83,1.3);fill.position.set(2,-1,3);scene.add(fill);
   let width=0,height=0,raf=0,px=0,py=0,mx=0,my=0,lastTime=0,lastPaint=0;
-  let rendered=null,kitPresence=0;
-  function resize(){const w=stage.clientWidth,h=stage.clientHeight;if(w>0&&h>0&&(w!==width||h!==height)){width=w;height=h;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();camera.position.set(0,0,7.6);}}
+  let rendered=null,kitPresence=0,sizeDirty=true,suspended=false,contextLost=false,quality=1,slowFrames=0;
+  const frameInterval=1000/deviceProfile.fps;
+  addEventListener('resize',()=>{sizeDirty=true;requestTick();},{passive:true});
+  function resize(){if(!sizeDirty)return;const w=stage.clientWidth,h=stage.clientHeight;if(w>0&&h>0){width=w;height=h;const ratio=Math.min(devicePixelRatio||1,deviceProfile.maxRatio,Math.sqrt(deviceProfile.maxPixels/(w*h)))*quality;renderer.setPixelRatio(ratio);renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();sizeDirty=false;}}
+  function allowed(){return pose.active&&!pose.covered&&!document.hidden&&!document.body.classList.contains('modal-open')&&!contextLost;}
+  function suspend(){if(raf){cancelAnimationFrame(raf);raf=0;}cameraRig.finish();if(!suspended){suspended=true;stage.classList.add('camera-suspended');renderer.setSize(1,1,false);width=height=0;sizeDirty=true;stage.dataset.renderState='paused';}lastTime=0;rendered=null;}
+
   function draw(time,force=false){
-   raf=0;if(!force&&!reduced&&innerWidth<700&&time-lastPaint<30){requestRender();return;}lastPaint=time;if(!force&&(!pose.active||pose.covered||document.hidden||document.body.classList.contains('modal-open'))){lastTime=0;rendered=null;return;}
+   raf=0;if(!force&&!allowed()){suspend();return;}if(!force&&time-lastPaint<frameInterval-1){requestRender();return;}lastPaint=time;const resumed=suspended;suspended=false;
    resize();
    const dt=Math.min((time-(lastTime||time-16.67))/1000,.05);lastTime=time;
    const ease=1-Math.exp(-dt/0.16),pointerEase=1-Math.exp(-dt/0.22);
@@ -110,8 +118,9 @@ async function initCamera() {
    if(reduced){px=0;py=0;}if(!rendered||reduced)rendered={...pose};
    for(const key of ['x','y','scale','turn'])rendered[key]+=(pose[key]-rendered[key])*ease;
    const viewHeight=2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*camera.position.z;
-   const base=innerWidth<700?.51:.81;
-   const targetReveal=smooth((innerHeight*.65-kit.getBoundingClientRect().top)/(innerHeight*.6));
+   const base=innerWidth<700?.47:.81;
+   const targetReveal=pose.kitReveal??0;
+   if(resumed)kitPresence=targetReveal;
    kitPresence=reduced?targetReveal:kitPresence+(targetReveal-kitPresence)*ease;const kitReveal=kitPresence;
    const float=reduced?0:Math.sin(time*.00135)*.075;
    const parallax=reduced?0:1-pose.kitProgress*.5;
@@ -119,21 +128,21 @@ async function initCamera() {
    model.position.set((rendered.x-.5-kitReveal*.09)*viewHeight*camera.aspect+px*.23*parallax,(.5-rendered.y)*viewHeight+float-py*.14*parallax,0);
    model.rotation.set(-.10+Math.sin(rendered.turn*Math.PI*2)*.10+py*.20*parallax,-.52+rendered.turn*Math.PI*2+px*.55*parallax+(reduced?0:Math.sin(time*.00085)*.045),-.04+Math.sin(rendered.turn*Math.PI*2)*.04+(reduced?0:Math.sin(time*.0008)*.012));
    cameraRig.update(time,kitReveal,viewHeight*camera.aspect);
-   renderer.render(scene,camera);
+   const drawStart=performance.now();renderer.render(scene,camera);
+   // Reduce raster cost on a slow GPU without changing the camera path.
+   if(gl&&!force&&performance.now()-drawStart>24){if(++slowFrames>=12&&quality>.65){quality=Math.max(.65,quality-.15);sizeDirty=true;slowFrames=0;}}else slowFrames=Math.max(0,slowFrames-1);
+   stage.classList.remove('camera-suspended');stage.dataset.renderState='active';
    stage.dataset.lens=String(cameraRig.selected);stage.dataset.exchanging=String(cameraRig.busy);
-   // Render diagnostics let preview checks verify the actual displayed model.
-   stage.dataset.rotation=model.rotation.y.toFixed(4);
-   stage.dataset.hover=float.toFixed(4);
-   stage.dataset.position=`${model.position.x.toFixed(3)},${model.position.y.toFixed(3)}`;
    if(!reduced||cameraRig.busy)requestRender();
   }
-  function requestRender(){if(!raf&&pose.active&&!pose.covered&&!document.hidden&&!document.body.classList.contains('modal-open'))raf=requestAnimationFrame(draw);}
+  function requestRender(){if(!allowed()){suspend();return;}if(!raf)raf=requestAnimationFrame(draw);}
   rendererUpdate=requestRender;
-  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();stage.classList.remove('ready');});
-  renderer.domElement.addEventListener('webglcontextrestored',()=>{stage.classList.add('ready');resize();requestTick();});
+  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();contextLost=true;suspend();stage.classList.remove('ready');});
+  renderer.domElement.addEventListener('webglcontextrestored',()=>{contextLost=false;sizeDirty=true;stage.classList.add('ready');requestTick();});
   addEventListener('pointermove',e=>{if(reduced||e.pointerType==='touch'||pose.covered||!pose.active)return;mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;requestRender();},{passive:true});
   addEventListener('pointerout',e=>{if(!e.relatedTarget){mx=0;my=0;}},{passive:true});
-  document.addEventListener('visibilitychange',()=>{lastTime=0;lastPaint=0;if(raf){cancelAnimationFrame(raf);raf=0;}if(!document.hidden)requestTick();});
+  document.addEventListener('visibilitychange',()=>{lastTime=0;lastPaint=0;if(raf){cancelAnimationFrame(raf);raf=0;}if(document.hidden)suspend();else requestTick();});
+  new MutationObserver(()=>{if(document.body.classList.contains('modal-open'))suspend();else requestTick();}).observe(document.body,{attributes:true,attributeFilter:['class']});
   resize();pose=calculatePose();
   try{
    if(gl){cameraRig.update(performance.now(),0,1);if(renderer.compileAsync)await renderer.compileAsync(scene,camera);else renderer.compile(scene,camera);}
@@ -141,11 +150,13 @@ async function initCamera() {
   }catch(error){
    if(!gl)throw error;
    renderer.domElement.remove();renderer.dispose();gl=null;
-   const {turntableRenderer}=await import('./turntable-camera.js?v=14');renderer=await turntableRenderer(THREE);
-   renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));stage.append(renderer.domElement);stage.dataset.renderer='turntable';width=0;height=0;
+   const {turntableRenderer}=await import('./turntable-camera.js?v=final21');renderer=await turntableRenderer(THREE);
+   renderer.setPixelRatio(1);stage.append(renderer.domElement);stage.dataset.renderer='turntable';width=0;height=0;sizeDirty=true;
    if(raf){cancelAnimationFrame(raf);raf=0;}draw(performance.now(),true);
   }
   stage.classList.add('ready');stage.dataset.ready='true';
   await boot.ready();requestTick();
 }
 cameraReady=initCamera().catch(async error=>{stage.classList.remove('ready');stage.dataset.error='model-load';console.error('Camera model could not load',error);try{await stage.querySelector('.camera-fallback img').decode();}catch{}await boot.ready('Explore the journal');});
+
+initDesk();

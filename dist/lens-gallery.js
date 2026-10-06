@@ -10,6 +10,9 @@ export function initLensGallery({root,sets,onOpen,onSelect=async()=>{throw new E
  function render(){
   const set=ready[current];if(!set)return;
   title.textContent=set.name;gallery.replaceChildren();
+  const storyTitle=root.querySelector('[data-lens-story-title]'),story=root.querySelector('[data-lens-story]');
+  if(storyTitle)storyTitle.textContent=set.storyTitle||set.name;
+  if(story)story.textContent=set.story||set.description;
   root.querySelector('[data-lens-description]').textContent=set.description;
   root.querySelector('[data-lens-count]').textContent=`${String(current+1).padStart(2,'0')} / ${String(ready.length).padStart(2,'0')}`;
   root.querySelector('[data-parked-lens]').textContent=ready[(current+1)%ready.length].name.replace('EF-S ','')+' · NEXT LENS';

@@ -36,5 +36,6 @@ export function createCameraRig({THREE,scene,model,parts,reducedMotion=()=>false
   if(t===1){selected=1-selected;groups[selected].userData.attachedTo=model;groups[selected].userData.seat=seats[selected];const done=transition.resolve;transition=null;done();}
  }
  function select(set){const target=set.id==='tele-55-250'?1:0;if(reducedMotion()&&!transition){selected=target;update(lastTime,reveal,viewWidth);return Promise.resolve();}if(target===selected&&!transition)return Promise.resolve();if(transition)return transition.promise;let resolve;const promise=new Promise(r=>resolve=r);transition={start:performance.now(),resolve,promise};return promise;}
- return {update,select,get selected(){return selected},get busy(){return !!transition}};
+ function finish(){if(!transition)return;const done=transition.resolve;selected=1-selected;transition=null;update(lastTime,reveal,viewWidth);done();}
+ return {update,select,finish,get selected(){return selected},get busy(){return !!transition}};
 }

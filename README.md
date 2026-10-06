@@ -1,56 +1,23 @@
-# Umanga Rimal — Through the lens
+# Umanga Rimal — final portfolio export
 
-Complete portfolio source and media, updated 3 October 2026. A personal photography and filmmaking showcase from Nepal.
+Final snapshot: 6 October 2026. Contains the bound photobook, My desk, lens stories, photo-story editor, camera offscreen pause/resume, the supplied car before/after edit, and 21 gallery photographs including two new portrait shoots. Annotation feedback mode is removed.
 
-## Included
+## Vercel deployment
 
-- Interactive Canon EOS 850D camera, scroll motion, hover and pointer response.
-- Animated EF-S 18–55mm / 55–250mm lens exchange with matching photo collections.
-- 19 original photographs, category filters and a keyboard/touch lightbox.
-- The updated pale gray suit portrait in About.
-- Break the pattern reel with a modal player and lazy-loaded video.
-- Before/after color study, continuously moving marquee and custom cursor.
-- Education, interests, Knowbit AI, QnA Book and email/Instagram contact.
+Upload all contents of this folder to your repository, keeping `dist/` and `vercel.json` at the root. On Vercel choose framework **Other**, leave build and install commands empty, and set Output Directory to **dist**. The included vercel.json sets these options. No TanStack, npm install, API keys, or build step is required.
 
-All runtime JavaScript, models, textures, fonts, photographs and video are included locally. No ChatGPT account, API key or subscription is required to run this website.
+## Preview locally
 
-## Run locally
+From this folder run `python -m http.server 8000 --directory dist`, then open http://localhost:8000. A local HTTP server is required for the JavaScript modules and camera assets; do not double-click index.html.
 
-Install Node.js, open a terminal at the repository root, then run:
+## Photos and edits
 
-```sh
-npm run dev
-```
+Read PHOTO-GUIDE.md and PHOTO-UPLOADS/README.md for the exact photo locations and adding photos. All gallery data is in `dist/content.js`. The supplied originals are kept in PHOTO-UPLOADS; deployed WebP files are in dist/photos.
 
-Open http://localhost:4173. No npm install or build is needed. Use the local server instead of double-clicking index.html because the camera and JavaScript modules need HTTP.
+## Contact and stories
 
-## Deploy with Vercel
+The contact form prepares a message in the visitor's email app; it does not send mail by itself. Photo-story drafts save in the browser. Download them as JSON, then add their entries to `photoStories` in content.js to publish them for everyone.
 
-Import this GitHub repository into Vercel. The included vercel.json uses:
+## Camera and motion
 
-- Framework: Other
-- Root directory: repository root
-- Build and install commands: empty
-- Output directory: dist
-
-If your existing Vercel project is connected to main, its configured automatic deployment can use this commit. Domain and deployment settings remain in your Vercel account. The canonical and social-preview URLs in dist/index.html use https://umangarimal.com.np; update those URLs if you use a different primary domain.
-
-## Edit content
-
-- `dist/content.js`: one photo list, photo categories/lens assignments, portrait, reel, contact details and project descriptions.
-- `dist/photos/`: gallery photographs, thumbnails, portrait, reel cover, color pair and social preview.
-- `dist/assets/work/break-the-pattern.mp4`: the reel video.
-- `PHOTO-GUIDE.md`: every photo and its position on the website.
-- `dist/index.html`: page sections, education and introductory text.
-- `dist/style.css`: layouts, colors, typography and responsive styles.
-- `dist/app.js`: main interactions.
-- `dist/camera-rig.js`, `dist/camera-motion.js`, `dist/lens-gallery.js`: camera journey, physical lens exchange and photo orbit.
-- `docs/content-editing.md`: photo filename mappings and instructions.
-
-The first five gallery photos belong to the 55–250mm lens, and the next three to the 18–55mm lens. The eleven later photos appear in the main gallery but have no lens assignment yet. Assign their `lens` values in content.js once confirmed.
-
-The contact form prepares a message for the visitor's email app; it does not send or store messages on a server. Camera motion stays on as requested, with rendering paused when hidden or unnecessary. A measured Lighthouse score is not included.
-
-## Assets and maintenance
-
-Desktop and mobile camera/lens GLBs are included along with turntable fallbacks. Optional model preparation scripts are in scripts; they are not required for running or deploying the site. Preserve the font and Three.js license notices in dist/assets. The color comparison retains its existing study pair.
+The supplied 3D camera and lenses remain. Rendering stops when the camera is offscreen, covered by the archive or a dialog, or the tab is hidden, and resumes with the selected lens and scroll position. There is no low-memory device mode. The full turntable fallback is used only if WebGL is unavailable. Preserve font and Three.js license notices in dist/assets.

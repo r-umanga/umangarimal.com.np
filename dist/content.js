@@ -1,6 +1,6 @@
 // Add a photo to this ONE list. Gallery, category filters and lens collections update together.
 // Each entry uses a full WebP src and a smaller WebP thumb. No fixed photo-count limit.
-// Categories: street, light, events, nature. Lens: kit-18-55 or tele-55-250.
+// Categories: street, light, events, nature, portraits. Lens: kit-18-55 or tele-55-250.
 export const photos = [
   {
     "id": "in-flight",
@@ -286,19 +286,49 @@ export const photos = [
     "alt": "An ornate golden shrine against the white dome of a stupa, with its spire above.",
     "lens": null,
     "note": ""
+  },
+  {
+    "id": "two-smiles",
+    "title": "Two smiles",
+    "category": "portraits",
+    "categoryLabel": "Portraits",
+    "src": "photos/gallery/two-smiles.webp",
+    "thumb": "photos/gallery/thumbnails/two-smiles-small.webp",
+    "width": 1066,
+    "height": 1600,
+    "thumbWidth": 600,
+    "thumbHeight": 900,
+    "alt": "A smiling woman seated on a motorcycle with a man behind her making peace signs, against green foliage.",
+    "lens": null,
+    "note": "Portrait shoot"
+  },
+  {
+    "id": "beside-the-carved-pillar",
+    "title": "Beside the carved pillar",
+    "category": "portraits",
+    "categoryLabel": "Portraits",
+    "src": "photos/gallery/beside-the-carved-pillar.webp",
+    "thumb": "photos/gallery/thumbnails/beside-the-carved-pillar-small.webp",
+    "width": 1600,
+    "height": 1066,
+    "thumbWidth": 720,
+    "thumbHeight": 480,
+    "alt": "A smiling woman leaning around a dark carved wooden pillar, with warm sunlight behind her.",
+    "lens": null,
+    "note": "Portrait shoot"
   }
 ];
 export const portfolio = {
  portrait:'photos/about/umanga-rimal-portrait-gray.webp',
  portraitAlt:'Umanga Rimal wearing a pale gray suit and plaid tie against a blue studio backdrop',
  photos,
- contact:{email:'r.umanga@outlook.com',instagram:'https://www.instagram.com/r.umanga_/'},
+ contact:{email:'r.umanga@outlook.com',instagram:'https://www.instagram.com/r.umanga_/',github:'https://github.com/r-umanga',linkedin:null},
  knowbit:{description:'An API-powered chatbot and image generator I built in Class 9.',url:'https://knowbit.netlify.app'},
  videos:[{id:'break-the-pattern',title:'Break the pattern',description:'A short reel about breaking routine, with a look inside the edit.',src:'assets/work/break-the-pattern.mp4',poster:'photos/reel/break-the-pattern-poster.webp',duration:'0:16'}]
 };
 export const lensSets = [
- {id:'kit-18-55',name:'EF-S 18–55mm',model:'assets/camera-kiri.glb',description:'For everyday frames and wider scenes.',photos:photos.filter(p=>p.lens==='kit-18-55')},
- {id:'tele-55-250',name:'EF-S 55–250mm',model:'assets/lens-55-250.glb',description:'A closer look at distant details.',photos:photos.filter(p=>p.lens==='tele-55-250')}
+ {id:'kit-18-55',name:'EF-S 18–55mm',model:'assets/camera-kiri.glb',description:'For everyday frames and wider scenes.',storyTitle:'The world around me.',story:'Streets, everyday scenes, and the light close by.',photos:photos.filter(p=>p.lens==='kit-18-55')},
+ {id:'tele-55-250',name:'EF-S 55–250mm',model:'assets/lens-55-250.glb',description:'A closer look at distant details.',storyTitle:'The details beyond me.',story:'Birds, distant shapes, and moments worth looking closer at.',photos:photos.filter(p=>p.lens==='tele-55-250')}
 ];
 // Unknown project details stay absent until confirmed by Umanga.
 export const projects = [
@@ -306,3 +336,6 @@ export const projects = [
  {id:'portfolio',title:'This portfolio',label:'PHOTOGRAPHY / DESIGN / DEVELOPMENT',description:'A personal home for my photographs, films and experiments.',built:'A scroll-driven camera with interchangeable lenses, photo galleries, a reel player and a color comparison.',tools:['HTML','CSS','JavaScript','Three.js'],url:'#home',linkLabel:'Explore this portfolio'},
  {id:'qna',title:'QnA Book',label:'STUDENT PROJECT',description:'A social platform where Class 10 students connect, share problems and help each other find solutions.',built:'A post-and-comment system for sharing questions and discussing answers.',tools:[],url:'https://preview--qna-book.lovable.app/?__lovable_sha=b8e49b60',linkLabel:'Open QnA Book preview'}
 ];
+
+// Published stories; browser drafts can be exported from the photo-story editor.
+export const photoStories = {};
